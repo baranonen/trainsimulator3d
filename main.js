@@ -4,6 +4,7 @@ var cameraZ = 0
 
 var currentPower = 0
 var speed = 0
+var displaySpeed = 0
 
 c3dl.addMainCallBack(canvasMain, "canvas");
 c3dl.addModel("M2.dae");
@@ -41,6 +42,10 @@ document.onkeydown = function(e) {
     }
 }
 
+function help() {
+    alert("Move power handle backwards: Q\nMove power handle forwards: Z\n\nYou can click the power notches to move the handle as well.\n\nUse arrow keys to look around.\n\nDo not exceed 80 km/h.")
+}
+
 function scale (number, inMin, inMax, outMin, outMax) {
     return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
@@ -70,8 +75,15 @@ function update(timestamp) {
         speed = 0
     }
 
+    displaySpeed = Math.floor(speed * 50)
+
     cam.setLinearVel(new Array(speed, 0, 0))
-    document.getElementById("speedo").innerHTML = Math.floor(speed * 50) + " km/h"
+    document.getElementById("speedo").innerHTML = displaySpeed + " km/h"
+    if (displaySpeed > 80) {
+        document.getElementById("speedo").style.color = "red"
+    } else {
+        document.getElementById("speedo").style.color = "black"
+    }
 }
 
 start();

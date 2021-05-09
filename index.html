@@ -44,9 +44,9 @@
             transform: rotate(270deg);
             -moz-transform: rotate(270deg);
             width: 100vh;
-            margin-top: calc(100vh / 2 - 75px);
-            margin-left: calc(-50vh + 75px);
-            height: 150px;
+            margin-top: calc(100vh / 2 - 50px);
+            margin-left: calc(-50vh + 50px);
+            height: 100px;
             outline: none;
             -webkit-appearance: none;
             opacity: 0.7;
@@ -55,14 +55,14 @@
             -webkit-appearance: none;
             appearance: none;
             width: calc(100vh/13);
-            height: 150px;
+            height: 100px;
             background: rgb(96, 167, 212);
             cursor: pointer;
         }
 
         .slider::-moz-range-thumb {
             width: calc(100vh/13);
-            height: 150px;
+            height: 100px;
             background: rgb(96, 167, 212);
             cursor: pointer;
         }
@@ -77,7 +77,7 @@
         }
         .sliderlabels p {
             height: calc(100vh/13);
-            width: 150px;
+            width: 100px;
             font-size: 30px;
             display: flex;
             align-items: center;
@@ -96,6 +96,16 @@
         .speedocontainer p {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             padding: 20px;
+        }
+        .help {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: #ffffffc4;
+            font-size: 30px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            padding: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -123,6 +133,7 @@
         <div class="speedocontainer">
             <p id="speedo">0 km/h</p>
         </div>
+        <a class="help" onclick="help()">?</a>
     </div>
 </body>
 </html>
