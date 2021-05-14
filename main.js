@@ -108,7 +108,8 @@ function canvasMain() {
         scn.addObjectToScene(duck);
         cam = new c3dl.FreeCamera();
         cam.setPosition(new Array(-2000, 50, 80));
-        cam.setLookAtPoint(new Array(0,50,80));
+        cam.setLookAtPoint(new Array(400000,50,80));
+        cam.yaw(-0.01)
         cam.setFarClippingPlane(9000)
         cam.setFieldOfView(40)
         cam.setLinearVel(new Array(0, 0, 0))
