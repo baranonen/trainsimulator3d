@@ -120,7 +120,7 @@ var atoinfo =
             },
             {
                 pos: (65000 * 6),
-                speed: 0
+                speed: -1
             }
         ]
 }
