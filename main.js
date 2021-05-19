@@ -10,6 +10,8 @@ var targetSpeed = 0
 var atoStart = false
 var atoStop = false
 var atpProt = false
+var leftDoors = "Open"
+var rightDoors = "Closed"
 
 var atoinfo = 
 {
@@ -173,11 +175,32 @@ document.onkeydown = function(e) {
                 }
                 mode = "ATO"
             }
+            break
+        case 53:
+            if (speed != 0) {
+                break
+            }
+            if (leftDoors == "Closed") {
+                leftDoors = "Open"
+            } else {
+                leftDoors = "Closed"
+            }
+            break
+        case 54:
+            if (speed != 0) {
+                break
+            }
+            if (rightDoors == "Closed") {
+                rightDoors = "Open"
+            } else {
+                rightDoors = "Closed"
+            }
+            break
     }
 }
 
 function help() {
-    alert("Move power handle backwards: Q\nMove power handle forwards: Z\nEmergency Brake: 1\nEnable/Disable ATO (Automatic Train Operation): K\n\nYou can click the power notches to move the handle as well.\n\nUse arrow keys to look around.\n\nDo not exceed 80 km/h.")
+    alert("Move power handle backwards: Q\nMove power handle forwards: Z\nEmergency Brake: 1\nEnable/Disable ATO (Automatic Train Operation): K\n\nYou can click the power notches to move the handle as well.\n\nOpen/close the left side doors: 5\nOpen/close the right side doors: 6\n\nUse arrow keys to look around.\n\nDo not exceed 80 km/h.")
 }
 
 function atp() {
@@ -194,6 +217,10 @@ function atp() {
 }
 
 function ato() {
+    if (!(leftDoors == "Closed" && rightDoors == "Closed")) {
+        mode = "ATP"
+        return
+    }
     loop1:
     for (var i = 0; i < atoinfo.route.length; i++) {
         waypoint = atoinfo.route[i]
@@ -313,11 +340,13 @@ function update(timestamp) {
     deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
     lastTimestamp = timestamp;
 
-    if (currentPower > 0) {
-        speed = speed + scale(currentPower, 0, 3, 0, 1) / 1000
-    } else if (currentPower < 0) {
-        if (speed > 0) {
-            speed = speed - scale(currentPower, 0, -8, 0, 1) / 350
+    if (leftDoors == "Closed" && rightDoors == "Closed") {
+        if (currentPower > 0) {
+            speed = speed + scale(currentPower, 0, 3, 0, 1) / 1000
+        } else if (currentPower < 0) {
+            if (speed > 0) {
+                speed = speed - scale(currentPower, 0, -8, 0, 1) / 350
+            }
         }
     }
 
@@ -339,7 +368,11 @@ function update(timestamp) {
     }
 
     document.getElementById("traveled").innerHTML = Math.round((cam.getPosition()[0]) / 50) + " m"
+    document.getElementById("leftdoors").innerHTML = leftDoors
+    document.getElementById("rightdoors").innerHTML = rightDoors
+
     atp()
+
     if (mode == "ATO") {
         ato()
     }
