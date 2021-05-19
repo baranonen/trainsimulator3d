@@ -49,21 +49,22 @@
             height: 100px;
             outline: none;
             -webkit-appearance: none;
-            opacity: 0.7;
+            background-color: black;
+            opacity: 0.77;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: calc(100vh/13);
             height: 100px;
-            background: rgb(96, 167, 212);
+            background: rgb(22, 73, 105);
             cursor: pointer;
         }
 
         .slider::-moz-range-thumb {
             width: calc(100vh/13);
             height: 100px;
-            background: rgb(96, 167, 212);
+            background: rgb(22, 73, 105);
             cursor: pointer;
         }
         .sliderlabels {
@@ -78,6 +79,7 @@
         .sliderlabels p {
             height: calc(100vh/13);
             width: 100px;
+            color: white;
             font-size: 30px;
             display: flex;
             align-items: center;
@@ -87,21 +89,38 @@
         }
         .speedocontainer {
             position: absolute;
-            left: 50vw;
+            right: 0;
+            left: 100px;
             bottom: 0;
-            transform: translate(-50%, 0);
-            background-color: #ffffffc4;
+            background-color: #000000c4;
             font-size: 30px;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0 10px 0;
         }
         .speedocontainer p {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            padding: 20px;
+            padding: 10px 20px 10px 20px;
+            color: white;
+            font-size: 30px;
+        }
+        .speedocontainer div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 0.5px solid white;
+            border-right: 0.5px solid white;
+        }
+        .smalltext {
+            font-size: 15px !important;
+            padding: 0;
         }
         .help {
             position: absolute;
             right: 0;
             top: 0;
-            background-color: #ffffffc4;
+            background-color: #000000c4;
+            color: white;
             font-size: 30px;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             padding: 20px;
@@ -131,7 +150,18 @@
             </div>
         </div>
         <div class="speedocontainer">
-            <p id="speedo">0 km/h</p>
+            <div>
+                <p id="speedo">--</p>
+                <p class="smalltext">Speed</p>
+            </div>
+            <div>
+                <p id="mode">--</p>
+                <p class="smalltext">Mode</p>
+            </div>
+            <div>
+                <p id="traveled">--</p>
+                <p class="smalltext">Traveled Distance</p>
+            </div>
         </div>
         <a class="help" onclick="help()">?</a>
     </div>
