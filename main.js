@@ -5,15 +5,15 @@ var cameraZ = 0
 var currentPower = 0
 var speed = 0
 var displaySpeed = 0
-var mode = "Manual"
+var mode = "ATP"
 var targetSpeed = 0
 var atoStart = false
 var atoStop = false
+var atpProt = false
 
 var atoinfo = 
 {
-    routes: {
-        taksimosmanbey: [
+    route: [
             {
                 pos: 0,
                 speed: 80
@@ -123,7 +123,6 @@ var atoinfo =
                 speed: 0
             }
         ]
-    }
 }
 
 c3dl.addMainCallBack(canvasMain, "canvas");
@@ -144,27 +143,28 @@ document.onkeydown = function(e) {
             cam.yaw(0.05)
             break
         case 81:
-            mode = "Manual"
+            mode = "ATP"
             if (document.getElementById("power").value > 1) {
                 document.getElementById("power").value --
                 powerChange()
             }
             break
         case 90:
-            mode = "Manual"
+            mode = "ATP"
             if (document.getElementById("power").value < 13) {
                 document.getElementById("power").value ++
                 powerChange()
             }
             break
         case 49:
-            mode = "Manual"
+            mode = "ATP"
             document.getElementById("power").value = 1
             powerChange()
             break
         case 75:
+            atoStop = false
             if (mode == "ATO") {
-                mode = "Manual"
+                mode = "ATP"
                 document.getElementById("power").value = 9
                 powerChange()
             } else {
@@ -180,12 +180,28 @@ function help() {
     alert("Move power handle backwards: Q\nMove power handle forwards: Z\nEmergency Brake: 1\nEnable/Disable ATO (Automatic Train Operation): K\n\nYou can click the power notches to move the handle as well.\n\nUse arrow keys to look around.\n\nDo not exceed 80 km/h.")
 }
 
+function atp() {
+    if (displaySpeed > 90) {
+        atpProt = true
+    }
+    if (displaySpeed < 80) {
+        atpProt = false
+    }
+    if (atpProt == true) {
+        document.getElementById("power").value = 1
+        powerChange()
+    }
+}
+
 function ato() {
     loop1:
-    for (var i = 0; i < atoinfo.routes.taksimosmanbey.length; i++) {
-        waypoint = atoinfo.routes.taksimosmanbey[i]
+    for (var i = 0; i < atoinfo.route.length; i++) {
+        waypoint = atoinfo.route[i]
         if (waypoint.pos > cam.getPosition()[0]) {
-            if (atoStart == 1 && waypoint.speed == 0) {
+            if (atpProt == true) {
+                break loop1
+            }
+            if (atoStart == true && waypoint.speed == 0) {
                 document.getElementById("power").value = 13
                 powerChange()
                 break loop1
@@ -196,21 +212,31 @@ function ato() {
                 atoStop = true
             }
             if (atoStop == true && speed == 0) {
-                mode = "Manual"
+                mode = "ATP"
+                document.getElementById("power").value = 2
                 atoStop = false
                 break loop1
             }
             if (atoStop == true) {
-                if (Math.abs(0 - displaySpeed) > 4) {
+                if (Math.abs(waypoint.speed - displaySpeed) > 7) {
+                    document.getElementById("power").value = 2
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 6) {
+                    document.getElementById("power").value = 3
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 5) {
+                    document.getElementById("power").value = 4
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 4) {
                     document.getElementById("power").value = 5
                     powerChange()
-                } else if (Math.abs(0 - displaySpeed) > 3) {
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 3) {
                     document.getElementById("power").value = 6
                     powerChange()
-                } else if (Math.abs(0 - displaySpeed) > 2) {
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 2) {
                     document.getElementById("power").value = 7
                     powerChange()
-                } else if (Math.abs(0 - displaySpeed) > 1) {
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 1) {
                     document.getElementById("power").value = 8
                     powerChange()
                 }
@@ -231,7 +257,16 @@ function ato() {
                     powerChange()
                 }
             } else if (waypoint.speed < displaySpeed) {
-                if (Math.abs(waypoint.speed - displaySpeed) > 4) {
+                if (Math.abs(waypoint.speed - displaySpeed) > 7) {
+                    document.getElementById("power").value = 2
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 6) {
+                    document.getElementById("power").value = 3
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 5) {
+                    document.getElementById("power").value = 4
+                    powerChange()
+                } else if (Math.abs(waypoint.speed - displaySpeed) > 4) {
                     document.getElementById("power").value = 5
                     powerChange()
                 } else if (Math.abs(waypoint.speed - displaySpeed) > 3) {
@@ -254,9 +289,9 @@ function ato() {
                 }
             }
             if (displaySpeed == 0 && document.getElementById("power").value < 9) {
-                mode = "Manual"
+                mode = "ATP"
             }
-            break loop1;
+            break loop1
         }
     }
 }
@@ -295,12 +330,16 @@ function update(timestamp) {
     cam.setLinearVel(new Array(speed, 0, 0))
     document.getElementById("speedo").innerHTML = displaySpeed + " km/h"
     document.getElementById("mode").innerHTML = mode
-    if (displaySpeed > 80) {
+    if (atpProt == true) {
         document.getElementById("speedo").style.color = "red"
+    } else if (displaySpeed > 80) {
+        document.getElementById("speedo").style.color = "orange"
     } else {
         document.getElementById("speedo").style.color = "white"
     }
+
     document.getElementById("traveled").innerHTML = Math.round((cam.getPosition()[0]) / 50) + " m"
+    atp()
     if (mode == "ATO") {
         ato()
     }
