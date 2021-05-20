@@ -241,6 +241,8 @@ function ato() {
             if (atoStop == true && speed == 0) {
                 mode = "ATP"
                 document.getElementById("power").value = 2
+                powerChange()
+                leftDoors = "Open"
                 atoStop = false
                 break loop1
             }
