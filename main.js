@@ -246,6 +246,16 @@ function ato() {
                 atoStop = false
                 break loop1
             }
+            if ((waypoint.speed < displaySpeed) && (Math.abs(waypoint.speed - displaySpeed) > 25)) {
+                document.getElementById("power").value = 1
+                powerChange()
+                break loop1
+            }
+            if (atoStop == true && waypoint.speed > 0) {
+                document.getElementById("power").value = 1
+                powerChange()
+                break loop1
+            }
             if (atoStop == true) {
                 if (Math.abs(waypoint.speed - displaySpeed) > 7) {
                     document.getElementById("power").value = 2
