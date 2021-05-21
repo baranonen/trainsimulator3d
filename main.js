@@ -12,6 +12,7 @@ var atoStop = false
 var atpProt = false
 var leftDoors = "Open"
 var rightDoors = "Closed"
+var lastMessage = ""
 
 var atoinfo = 
 {
@@ -145,35 +146,50 @@ document.onkeydown = function(e) {
             cam.yaw(0.05)
             break
         case 81:
-            mode = "ATP"
+            if (mode == "ATO") {
+                newMessage("ATO disabled.")
+                mode = "ATP"
+            }
             if (document.getElementById("power").value > 1) {
                 document.getElementById("power").value --
                 powerChange()
             }
             break
         case 90:
-            mode = "ATP"
+            if (mode == "ATO") {
+                newMessage("ATO disabled.")
+                mode = "ATP"
+            }
             if (document.getElementById("power").value < 13) {
                 document.getElementById("power").value ++
                 powerChange()
             }
             break
         case 49:
-            mode = "ATP"
+            if (mode == "ATO") {
+                newMessage("ATO disabled.")
+                mode = "ATP"
+            }
             document.getElementById("power").value = 1
             powerChange()
             break
         case 75:
             atoStop = false
             if (mode == "ATO") {
+                newMessage("ATO disabled.")
                 mode = "ATP"
                 document.getElementById("power").value = 9
                 powerChange()
             } else {
-                if (displaySpeed == 0 && document.getElementById("power").value < 9) {
-                    atoStart = true
+                if (leftDoors == "Closed" && rightDoors == "Closed") {
+                    if (displaySpeed == 0 && document.getElementById("power").value < 9) {
+                        atoStart = true
+                    }
+                    mode = "ATO"
+                    newMessage("ATO enabled.")
+                } else {
+                    newMessage("Cannot enable ATO. Close the doors.")
                 }
-                mode = "ATO"
             }
             break
         case 53:
@@ -206,6 +222,7 @@ function help() {
 function atp() {
     if (displaySpeed > 90) {
         atpProt = true
+        newMessage("Overspeed detected, emergency brakes applied.")
     }
     if (displaySpeed < 80) {
         atpProt = false
@@ -244,6 +261,7 @@ function ato() {
                 powerChange()
                 leftDoors = "Open"
                 atoStop = false
+                newMessage("Stopped at the station.")
                 break loop1
             }
             if ((waypoint.speed < displaySpeed) && (Math.abs(waypoint.speed - displaySpeed) > 25)) {
@@ -335,6 +353,16 @@ function ato() {
     }
 }
 
+function newMessage(msg) {
+    if (lastMessage != msg) {
+        messagesDiv = document.getElementById("messagesdiv")
+        lastMessage = msg
+        var d = new Date()
+        messagesDiv.insertAdjacentHTML("beforeend", "<p><b>" + d.toLocaleTimeString() + "</b> " + msg + "</p>")
+        messagesDiv.scrollTop = messagesDiv.scrollHeight
+    }
+}
+
 function scale (number, inMin, inMax, outMin, outMax) {
     return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
@@ -420,4 +448,5 @@ function canvasMain() {
         scn.setCamera(cam);
         scn.startScene();
     }
+    newMessage("Startup completed.")
 }

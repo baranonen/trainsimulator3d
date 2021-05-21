@@ -126,6 +126,22 @@
             padding: 20px;
             cursor: pointer;
         }
+        .messagesdiv {
+            height: 65px;
+            width: 200px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: 0 10px 0 10px;
+        }
+        .messagesdiv p {
+            font-size: 15px !important;
+            padding: 0;
+            text-align: left;
+            width: 180px;
+            max-width: 180px;
+            margin-top: 2.5px;
+            margin-bottom: 2.5px;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +185,11 @@
             <div>
                 <p id="rightdoors">--</p>
                 <p class="smalltext">Right Doors</p>
+            </div>
+            <div>
+                <div class="messagesdiv" id="messagesdiv">
+                </div>
+                <p class="smalltext">Messages</p>
             </div>
         </div>
         <a class="help" onclick="help()">?</a>
