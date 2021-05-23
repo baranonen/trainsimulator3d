@@ -142,6 +142,14 @@
             margin-top: 2.5px;
             margin-bottom: 2.5px;
         }
+        .secondslider {
+            margin-left: 100px;
+        }
+        .secondsliderlabels {
+            width: 23.07vh;
+            margin-top: calc(23.07vh / 2 - 50px);
+            margin-left: calc(-11.53vh + 50px);
+        }
     </style>
 </head>
 <body>
@@ -163,6 +171,14 @@
                 <p>B6</p>
                 <p>B7</p>
                 <p>EB</p>
+            </div>
+        </div>
+        <div class="slidercontainer secondslider">
+            <input onchange="directionChange()" id="direction" type="range" min="1" max="3" value="3" class="slider secondsliderlabels">
+            <div class="sliderlabels">
+                <p>F</p>
+                <p>N</p>
+                <p>B</p>
             </div>
         </div>
         <div class="speedocontainer">

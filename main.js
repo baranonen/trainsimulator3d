@@ -5,8 +5,8 @@ var cameraZ = 0
 var currentPower = 0
 var speed = 0
 var displaySpeed = 0
+var currentDirection = "F"
 var mode = "ATP"
-var targetSpeed = 0
 var atoStart = false
 var atoStop = false
 var atpProt = false
@@ -131,8 +131,34 @@ var atoinfo =
 c3dl.addMainCallBack(canvasMain, "canvas");
 c3dl.addModel("M2.dae");
 
+function directionChange() {
+    if (document.getElementById("direction").value == 1) {
+        currentDirection = "B"
+    } else if (document.getElementById("direction").value == 2) {
+        currentDirection = "N"
+    } else if (document.getElementById("direction").value == 3) {
+        currentDirection = "F"
+    }
+}
+
 document.onkeydown = function(e) { 
     switch (e.keyCode) { 
+        case 70:
+            if (mode == "ATO") {
+                newMessage("ATO disabled.")
+                mode = "ATP"
+            }
+            document.getElementById("direction").value ++
+            directionChange()
+            break
+        case 86: 
+            if (mode == "ATO") {
+                newMessage("ATO disabled.")
+                mode = "ATP"
+            }
+            document.getElementById("direction").value --
+            directionChange()
+            break
         case 38: 
             cam.pitch(-0.05)
             break
@@ -182,6 +208,8 @@ document.onkeydown = function(e) {
                 powerChange()
             } else {
                 if (leftDoors == "Closed" && rightDoors == "Closed") {
+                    document.getElementById("direction").value = 3
+                    directionChange()
                     if (displaySpeed == 0 && document.getElementById("power").value < 9) {
                         atoStart = true
                     }
@@ -220,11 +248,11 @@ function help() {
 }
 
 function atp() {
-    if (displaySpeed > 90) {
+    if (Math.abs(displaySpeed) > 90) {
         atpProt = true
         newMessage("Overspeed detected, emergency brakes applied.")
     }
-    if (displaySpeed < 80) {
+    if (Math.abs(displaySpeed) < 80) {
         atpProt = false
     }
     if (atpProt == true) {
@@ -382,16 +410,26 @@ function update(timestamp) {
 
     if (leftDoors == "Closed" && rightDoors == "Closed") {
         if (currentPower > 0) {
-            speed = speed + scale(currentPower, 0, 3, 0, 1) / 1000
+            if (currentDirection == "F") {
+                speed = speed + scale(currentPower, 0, 3, 0, 1) / 1000
+            } else if (currentDirection == "B") {
+                speed = speed - scale(currentPower, 0, 3, 0, 1) / 1000
+            }
         } else if (currentPower < 0) {
-            if (speed > 0) {
-                speed = speed - scale(currentPower, 0, -8, 0, 1) / 350
+            if (speed < 0) {
+                if (displaySpeed > -0.3) {
+                    speed = 0
+                } else {
+                    speed = speed + scale(currentPower, 0, -8, 0, 1) / 350
+                }
+            } else if (speed > 0) {
+                if (displaySpeed < 0.3) {
+                    speed = 0
+                } else {
+                    speed = speed - scale(currentPower, 0, -8, 0, 1) / 350
+                }
             }
         }
-    }
-
-    if (speed < 0) {
-        speed = 0
     }
 
     displaySpeed = Math.round(speed * 50)
@@ -401,7 +439,7 @@ function update(timestamp) {
     document.getElementById("mode").innerHTML = mode
     if (atpProt == true) {
         document.getElementById("speedo").style.color = "red"
-    } else if (displaySpeed > 80) {
+    } else if (Math.abs(displaySpeed) > 80) {
         document.getElementById("speedo").style.color = "orange"
     } else {
         document.getElementById("speedo").style.color = "white"
