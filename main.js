@@ -132,6 +132,10 @@ c3dl.addMainCallBack(canvasMain, "canvas");
 c3dl.addModel("M2.dae");
 
 function directionChange() {
+    if (mode == "ATO") {
+        mode = "ATP"
+        newMessage("ATO disabled.")
+    }
     if (document.getElementById("direction").value == 1) {
         currentDirection = "B"
     } else if (document.getElementById("direction").value == 2) {
@@ -244,7 +248,7 @@ document.onkeydown = function(e) {
 }
 
 function help() {
-    alert("Move power handle backwards: Q\nMove power handle forwards: Z\nEmergency Brake: 1\nEnable/Disable ATO (Automatic Train Operation): K\n\nYou can click the power notches to move the handle as well.\n\nOpen/close the left side doors: 5\nOpen/close the right side doors: 6\n\nUse arrow keys to look around.\n\nDo not exceed 80 km/h.")
+    alert("Move power handle backwards: Q\nMove power handle forwards: Z\nEmergency brake: 1\nYou can click the power notches to move the handle as well.\n\nChange direction: F/V\n\nEnable/Disable ATO (Automatic Train Operation): K\n\nOpen/close the left side doors: 5\nOpen/close the right side doors: 6\n\nUse the arrow keys to look around.\n\nDo not exceed 80 km/h.")
 }
 
 function atp() {
@@ -460,6 +464,9 @@ start();
 
 function powerChange() {
     currentPower = document.getElementById("power").value - 9
+    if (currentPower > -1) {
+        newMessage("Cannot move, close the doors.")
+    }
 }
 
 function canvasMain() {
