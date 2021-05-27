@@ -465,7 +465,9 @@ start();
 function powerChange() {
     currentPower = document.getElementById("power").value - 9
     if (currentPower > -1) {
-        newMessage("Cannot move, close the doors.")
+		if (leftDoors != "Closed" || rightDoors != "Closed") {
+			newMessage("Cannot move, close the doors.")
+		}
     }
 }
 
