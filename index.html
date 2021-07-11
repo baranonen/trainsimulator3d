@@ -7,6 +7,14 @@
     <title>Train Simulator - M2 İstanbul</title>
     <script type="application/javascript" src="../../c3dl/c3dapi.js" ></script>
     <script type="application/javascript" src="main.js"></script>
+	<meta name="mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<link rel="apple-touch-startup-image" href="/favicon.png">
+	<link rel="apple-touch-icon" href="favicon.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="touch-icon-ipad.png"/>
+	<link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png"/>
+	<link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-retina.png"/>
+	<link rel="manifest" href="manifest.json">
     <style>
         * {
             margin: 0;
@@ -51,6 +59,7 @@
             -webkit-appearance: none;
             background-color: black;
             opacity: 0.77;
+			border-radius: 0;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -59,13 +68,14 @@
             height: 100px;
             background: rgb(22, 73, 105);
             cursor: pointer;
+			border: none;
         }
-
         .slider::-moz-range-thumb {
             width: calc(100vh/13);
             height: 100px;
             background: rgb(22, 73, 105);
             cursor: pointer;
+			border: none;
         }
         .sliderlabels {
             position: absolute;
@@ -151,6 +161,64 @@
             margin-top: calc(23.07vh / 2 - 50px);
             margin-left: calc(-11.53vh + 50px);
         }
+
+		.rotatediv {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			-webkit-backdrop-filter: blur(5px);
+			background: #000000c4;
+			z-index: visible;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			display: none;
+		}
+
+		.rotatediv img {
+			max-width: 170px;
+			width: 50vw;
+		}
+
+		.rotatediv h1 {
+			color: white;
+			font-size: 20px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		}
+
+		@media screen and (orientation: portrait) {
+			.rotatediv {
+				display: flex;
+			}
+		}
+
+		@media screen and (max-width: 1000px) {
+			.sliderlabels p {
+            	font-size: 20px;
+        	}
+			.speedocontainer p {
+				font-size: 20px;
+				padding: 5px 10px 5px 10px;
+			}
+			.smalltext {
+				font-size: 12px !important;
+			}
+			.help {
+				font-size: 20px;
+				padding: 20px;
+			}
+			.messagesdiv p {
+            	width: 90px;
+				font-size: 12px !important;
+				padding: 0 5px 0 5px;
+			}
+			.messagesdiv {
+				width: 100px;
+				height: 40px;
+			}
+		}
     </style>
 </head>
 <body>
@@ -188,7 +256,7 @@
                 <p class="smalltext">Speed</p>
             </div>
             <div>
-                <p id="mode">--</p>
+                <p onmousedown="atoKeyPressed()" ontouchdown="atoKeyPressed()" id="mode">--</p>
                 <p class="smalltext">Mode</p>
             </div>
             <div>
@@ -196,11 +264,11 @@
                 <p class="smalltext">Traveled Distance</p>
             </div>
             <div>
-                <p id="leftdoors">--</p>
+                <p onmousedown="leftDoorsKeyPressed()" ontouchdown="leftDoorsKeyPressed()" id="leftdoors">--</p>
                 <p class="smalltext">Left Doors</p>
             </div>
             <div>
-                <p id="rightdoors">--</p>
+                <p onmousedown="rightDoorsKeyPressed()" ontouchdown="rightDoorsKeyPressed()" id="rightdoors">--</p>
                 <p class="smalltext">Right Doors</p>
             </div>
             <div>
@@ -211,5 +279,9 @@
         </div>
         <a class="help" onclick="help()">?</a>
     </div>
+	<div class="rotatediv">
+		<img src="rotate.svg" alt="">
+		<h1>Please rotate your device</h1>
+	</div>
 </body>
 </html>

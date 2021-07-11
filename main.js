@@ -13,6 +13,7 @@ var atpProt = false
 var leftDoors = "Open"
 var rightDoors = "Closed"
 var lastMessage = ""
+var isLoaded = false
 
 var atoinfo = 
 {
@@ -131,6 +132,11 @@ var atoinfo =
 c3dl.addMainCallBack(canvasMain, "canvas");
 c3dl.addModel("M2.dae");
 
+
+var t
+window.onresize = () => { clearTimeout(t); t = setTimeout(() => { resEnded() }, 500) }
+function resEnded() { var newURL = location.href.split("?")[0]; window.history.pushState('object', document.title, newURL); window.location.href = window.location.href + "?spd=" + speed + "&pos=" + cam.getPosition()[0] + "&pwr=" + document.getElementById("power").value  + "&mode=" + mode + "&leftdoors=" + leftDoors + "&rightdoors=" + rightDoors }
+
 function directionChange() {
     if (mode == "ATO") {
         mode = "ATP"
@@ -204,47 +210,67 @@ document.onkeydown = function(e) {
             powerChange()
             break
         case 75:
-            atoStop = false
-            if (mode == "ATO") {
-                newMessage("ATO disabled.")
-                mode = "ATP"
-                document.getElementById("power").value = 9
-                powerChange()
-            } else {
-                if (leftDoors == "Closed" && rightDoors == "Closed") {
-                    document.getElementById("direction").value = 3
-                    directionChange()
-                    if (displaySpeed == 0 && document.getElementById("power").value < 9) {
-                        atoStart = true
-                    }
-                    mode = "ATO"
-                    newMessage("ATO enabled.")
-                } else {
-                    newMessage("Cannot enable ATO. Close the doors.")
-                }
-            }
+            atoKeyPressed()
             break
         case 53:
-            if (speed != 0) {
-                break
-            }
-            if (leftDoors == "Closed") {
-                leftDoors = "Open"
-            } else {
-                leftDoors = "Closed"
-            }
+            leftDoorsKeyPressed()
             break
         case 54:
-            if (speed != 0) {
-                break
-            }
-            if (rightDoors == "Closed") {
-                rightDoors = "Open"
-            } else {
-                rightDoors = "Closed"
-            }
+            rightDoorsKeyPressed()
             break
     }
+}
+
+function rightDoorsKeyPressed() {
+	if (speed != 0) {
+		return
+	}
+	if (rightDoors == "Closed") {
+		rightDoors = "Open"
+	} else {
+		rightDoors = "Closed"
+	}
+}
+
+function leftDoorsKeyPressed() {
+	if (speed != 0) {
+		return
+	}
+	if (leftDoors == "Closed") {
+		leftDoors = "Open"
+	} else {
+		leftDoors = "Closed"
+	}
+}
+
+function atoKeyPressed() {
+	atoStop = false
+	if (mode == "ATO") {
+		newMessage("ATO disabled.")
+		mode = "ATP"
+		document.getElementById("power").value = 9
+		powerChange()
+	} else {
+		if (leftDoors == "Closed" && rightDoors == "Closed") {
+			document.getElementById("direction").value = 3
+			directionChange()
+			if (displaySpeed == 0 && document.getElementById("power").value < 9) {
+				atoStart = true
+			}
+			mode = "ATO"
+			newMessage("ATO enabled.")
+		} else {
+			newMessage("Cannot enable ATO. Close the doors.")
+		}
+	}
+}
+
+function powerNotchClicked() {
+	if (mode == "ATO") {
+		newMessage("ATO disabled.")
+		mode = "ATP"
+	}
+	powerChange()
 }
 
 function help() {
@@ -412,6 +438,12 @@ function update(timestamp) {
     deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
     lastTimestamp = timestamp;
 
+	if (isLoaded == false) {
+		return
+	}
+
+    displaySpeed = Math.round(speed * 50)
+
     if (leftDoors == "Closed" && rightDoors == "Closed") {
         if (currentPower > 0) {
             if (currentDirection == "F") {
@@ -435,8 +467,6 @@ function update(timestamp) {
             }
         }
     }
-
-    displaySpeed = Math.round(speed * 50)
 
     cam.setLinearVel(new Array(speed, 0, 0))
     document.getElementById("speedo").innerHTML = displaySpeed + " km/h"
@@ -472,6 +502,23 @@ function powerChange() {
 }
 
 function canvasMain() {
+	let params = (new URL(document.location)).searchParams;
+	if (params.get("leftdoors")) {
+		leftDoors = params.get("leftdoors")
+	}
+	if (params.get("rightdoors")) {
+		rightDoors = params.get("rightdoors")
+	}
+	if (params.get("pwr")) {
+		document.getElementById("power").value = parseInt(params.get("pwr"))
+        powerChange()
+	}
+	if (params.get("spd")) {
+		speed = parseFloat(params.get("spd"))
+	}
+	if (params.get("mode")) {
+		mode = params.get("mode")
+	}
     document.getElementById("canvas").width = window.innerWidth
     document.getElementById("canvas").height = window.innerHeight
     scn = new c3dl.Scene();
@@ -486,14 +533,21 @@ function canvasMain() {
         duck.init("M2.dae");
         scn.addObjectToScene(duck);
         cam = new c3dl.FreeCamera();
-        cam.setPosition(new Array(0, 50, 80));
+		if (params.get('pos')) {
+			cam.setPosition(new Array(Math.floor(parseInt(params.get('pos'))), 50, 80));
+		} else {
+			cam.setPosition(new Array(0, 50, 80));
+		}
         cam.setLookAtPoint(new Array(400000,50,80));
         cam.yaw(-0.01)
         cam.setFarClippingPlane(9000)
         cam.setFieldOfView(40)
-        cam.setLinearVel(new Array(0, 0, 0))
+		cam.setLinearVel(new Array(0, 0, 0))
         scn.setCamera(cam);
         scn.startScene();
     }
+	var newURL = location.href.split("?")[0];
+    window.history.pushState('object', document.title, newURL);
     newMessage("Startup completed.")
+	isLoaded = true
 }
