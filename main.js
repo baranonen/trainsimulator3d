@@ -358,7 +358,7 @@ function ato() {
                 break loop1;
             }
             if (waypoint.speed > displaySpeed) {
-                if ((waypoint.speed - displaySpeed) > 4) {
+                if ((waypoint.speed - displaySpeed) > 4) {
                     document.getElementById("power").value = 13
                     powerChange()
                 } else if ((waypoint.speed - displaySpeed) > 3) {
@@ -447,22 +447,22 @@ function update(timestamp) {
     if (leftDoors == "Closed" && rightDoors == "Closed") {
         if (currentPower > 0) {
             if (currentDirection == "F") {
-                speed = speed + scale(currentPower, 0, 3, 0, 1) / 1000
+                speed = speed + (scale(currentPower, 0, 4, 0, 1) / 1000) * deltaTime
             } else if (currentDirection == "B") {
-                speed = speed - scale(currentPower, 0, 3, 0, 1) / 1000
+                speed = speed - (scale(currentPower, 0, 4, 0, 1) / 1000) * deltaTime
             }
         } else if (currentPower < 0) {
             if (speed < 0) {
                 if (displaySpeed > -0.3) {
                     speed = 0
                 } else {
-                    speed = speed + scale(currentPower, 0, -8, 0, 1) / 350
+                    speed = speed - (scale(currentPower, 0, 8, 0, 1.7) / 1000) * deltaTime
                 }
             } else if (speed > 0) {
                 if (displaySpeed < 0.3) {
                     speed = 0
                 } else {
-                    speed = speed - scale(currentPower, 0, -8, 0, 1) / 350
+                    speed = speed + (scale(currentPower, 0, 8, 0, 1.7) / 1000) * deltaTime
                 }
             }
         }
